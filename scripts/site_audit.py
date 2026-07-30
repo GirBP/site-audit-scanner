@@ -1103,9 +1103,11 @@ def markdown_report(audit: dict[str, Any]) -> str:
         )
     lines.extend(["", "## Pages", "", "| Status | URL | Title | H1 | Words | HTML | TTFB |", "|---:|---|---|---|---:|---:|---:|"])
     for page in audit["pages"]:
+        page_title = page["title"].replace("|", "\\|") or "—"
+        page_h1 = (" / ".join(page["h1"])).replace("|", "\\|") or "—"
         lines.append(
-            f"| {page['status']} | `{page['url']}` | {page['title'].replace('|', '\\|') or '—'} | "
-            f"{(' / '.join(page['h1'])).replace('|', '\\|') or '—'} | {page['text_metrics']['words']} | "
+            f"| {page['status']} | `{page['url']}` | {page_title} | "
+            f"{page_h1} | {page['text_metrics']['words']} | "
             f"{page['html_bytes']:,} B | {page['ttfb_ms']} ms |"
         )
     lines.extend([
