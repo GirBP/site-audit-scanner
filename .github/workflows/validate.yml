@@ -1,0 +1,35 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Validate syntax
+        run: python -m py_compile scripts/site_audit.py scripts/test_site_audit.py
+      - name: Run contract test
+        run: python scripts/test_site_audit.py
+      - name: Validate skill frontmatter
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text = Path("SKILL.md").read_text(encoding="utf-8")
+          assert text.startswith("---\n")
+          frontmatter = text.split("---", 2)[1]
+          assert "\nname: site-audit-scanner\n" in f"\n{frontmatter}\n"
+          assert "\ndescription:" in f"\n{frontmatter}"
+          print("skill frontmatter: OK")
+          PY

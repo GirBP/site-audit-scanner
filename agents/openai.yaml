@@ -1,0 +1,4 @@
+interface:
+  display_name: "Site Audit Scanner"
+  short_description: "SEO, UX and technical website scanner"
+  default_prompt: "Use $site-audit-scanner to scan this website and produce an evidence-based audit report."
